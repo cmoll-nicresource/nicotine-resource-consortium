@@ -2,6 +2,8 @@ import path from 'path';
 import { defineStackbitConfig } from '@stackbit/types';
 import { SanityContentSource } from '@stackbit/cms-sanity';
 import { allModelExtensions } from './.stackbit/models';
+import { defineStackbitConfig } from "@stackbit/types";
+import { GitContentSource } from "@stackbit/cms-git";
 
 export default defineStackbitConfig({
     stackbitVersion: '~0.7.0',
@@ -38,7 +40,21 @@ export default defineStackbitConfig({
             projectId: process.env.SANITY_PROJECT_ID!,
             token: process.env.SANITY_TOKEN!,
             dataset: process.env.SANITY_DATASET || 'production'
-        })
+        }),
+        new GitContentSource({
+          rootPath: __dirname,
+          contentDirs: ["content"],
+          models: [
+            {
+              name: "Page",
+              // Define the model as a page model
+              type: "page",
+              urlPath: "/{slug}",
+              filePath: "content/pages/{slug}.json",
+              fields: [{ name: "title", type: "string", required: true }]
+            }
+      ],
+    })
     ],
     modelExtensions: allModelExtensions
 });
